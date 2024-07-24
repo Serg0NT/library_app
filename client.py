@@ -9,6 +9,17 @@ def main_response() -> str:
     return answer
 
 
+def response_id() -> int:
+    try:
+        answer = int(input(lexicon['req_id']))
+    except ValueError:
+        print('Введены некорректные данные. Ожидается ввод числового значения.\n')
+        return response_id()
+    else:
+        if answer > 0:
+            return answer
+    return response_id()
+
 def response_title() -> str:
     answer = input(lexicon['req_title'])
     if len(answer) < 1:

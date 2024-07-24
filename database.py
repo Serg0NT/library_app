@@ -1,31 +1,19 @@
 import json
 
 
-def read_json():
-    return json.load(open('data.json'))
-
-
-def write_json(book):
+def read_json() -> dict | None:
     try:
-        data = read_json()
+        return json.load(open('data.json'))
     except FileNotFoundError:
-        print('Файл отсутствует')
-        data = {
-            'count': 0,
-            'books': []
-        }
-    book['id'] = _auto_id(data)
-
-    data['books'].append(book)
-    data['count'] = data.get('count', 0) + 1
-    with open('data.json', 'w') as file:
-        json.dump(data, file, indent=2)
+        return
 
 
-def _auto_id(data) -> int:
-    if data['books']:
-        max_id = data['books'][-1]['id']
-        print(max_id)
-        return max_id + 1
-    else:
-        return 1
+def write_json(data):
+    try:
+        with open('data.json', 'w') as file:
+            json.dump(data, file, indent=2)
+    except Exception as err:
+        print(f'Неожиданная ошибка {err}.\n'
+              f'Обратитесь в техподдержку')
+
+
