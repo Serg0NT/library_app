@@ -1,10 +1,12 @@
+import main
+import keyboard
 from client import (response_title, response_author,
-                    response_year, response_id, main_response)
+                    response_year, response_id, response_search, main_response)
 from database import read_json, write_json
 
 
-def add() -> None:
-    book = {
+def add() -> main:
+    book: {str: any} = {
         'id': None,
         'title': response_title(),
         'author': response_author(),
@@ -12,24 +14,25 @@ def add() -> None:
         'status': True,
     }
 
-    data = read_json()
+    data: dict = read_json()
     if not data:
         data = {
             'count': 0,
             'books': []
         }
-    book['id'] = _auto_id(data)
+    book['id']: int = _auto_id(data)
     data['books'].append(book)
-    data['count'] = data.get('count', 0) + 1
+    data['count']: int = data.get('count', 0) + 1
     write_json(data)
+    return main.main()
 
 
-def delete() -> None | str:
-    del_id = response_id()
-    data = read_json()
-    if not data:
-        print('Файл БД отсутствует.\n')
-        return main_response()
+def delete() -> main | str:
+    del_id: int = response_id()
+    data: dict = read_json()
+    if not data['books']:
+        print('Файл БД отсутствует или пуст.\n')
+        return main.main()
     for book in data['books']:
         if book['id'] == del_id:
             data['books'].remove(book)
@@ -37,12 +40,22 @@ def delete() -> None | str:
             break
         else:
             print('Книга с данным ID отсутствует.\n')
-            return main_response()
+            return delete()
     write_json(data)
+    return main.main()
 
 
-def search():
-    pass
+def search() -> main:
+    field_text: tuple = response_search()
+    key_for_search = keyboard.keyboard_search[field_text[0]]
+    data = read_json()
+    for book in data['books']:
+        if field_text[1] in book[key_for_search]:
+
+            for key, value in book.items():
+                print(keyboard.keyboard_print[key], value)
+            print('-' * 20)
+    return main.main()
 
 
 def show_all():
@@ -55,6 +68,6 @@ def change_status():
 
 def _auto_id(data) -> int:
     if data['books']:
-        max_id = data['books'][-1]['id']
+        max_id: int = data['books'][-1]['id']
         return max_id + 1
     return 1

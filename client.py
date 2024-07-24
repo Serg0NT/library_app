@@ -2,16 +2,16 @@ from lexicon import lexicon
 
 
 def main_response() -> str:
-    answer = input(lexicon['req_1'])
+    answer = input(lexicon['req_1']).lower()
     if len(answer) != 1:
         print(lexicon['not_none'])
-        main_response()
+        return main_response()
     return answer
 
 
 def response_id() -> int:
     try:
-        answer = int(input(lexicon['req_id']))
+        answer: int = int(input(lexicon['req_id']))
     except ValueError:
         print('Введены некорректные данные. Ожидается ввод числового значения.\n')
         return response_id()
@@ -20,25 +20,26 @@ def response_id() -> int:
             return answer
     return response_id()
 
+
 def response_title() -> str:
-    answer = input(lexicon['req_title'])
+    answer: str = input(lexicon['req_title'])
     if len(answer) < 1:
         print(lexicon['not_none'])
-        response_title()
+        return response_title()
     return answer
 
 
 def response_author() -> str:
-    answer = input(lexicon['req_author'])
+    answer: str = input(lexicon['req_author'])
     if len(answer) < 1:
         print(lexicon['not_none'])
-        response_author()
+        return response_author()
     return answer
 
 
 def response_year() -> int:
     try:
-        answer = int(input(lexicon['req_year']))
+        answer: int = int(input(lexicon['req_year']))
     except ValueError:
         print('Введены некорректные данные. Ожидается ввод числового значения.\n')
         return response_year()
@@ -46,3 +47,15 @@ def response_year() -> int:
         if 0 < answer < 2024:
             return answer
         return response_year()
+
+
+def response_search() -> tuple:
+    field: str = input(lexicon['for_search']).lower()
+    if len(field) != 1:
+        print(lexicon['not_none'])
+        return response_search()
+    text: str = input('Введите Ваш запрос:\n')
+    if not text:
+        print(lexicon['not_none'])
+        return response_search()
+    return field, text

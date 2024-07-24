@@ -1,9 +1,13 @@
-from manipulation import add, delete
+import keyboard
 from client import main_response
 
+
+def main():
+    answer = main_response()
+    keyboard.keyboard_main[answer]()
+
+
 if __name__ == '__main__':
-    res = main_response().lower()
-    if res == 'д':
-        add()
-    if res == 'у':
-        delete()
+    main()
+    # res = main()
+    # keyboard[res]()
