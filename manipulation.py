@@ -3,6 +3,7 @@ import keyboard
 from client import (response_title, response_author,
                     response_year, response_id, response_search, main_response)
 from database import read_json, write_json
+from lexicon import lexicon_status
 
 
 def add() -> main:
@@ -27,7 +28,7 @@ def add() -> main:
     return main.main()
 
 
-def delete() -> main | str:
+def delete() -> str:
     del_id: int = response_id()
     data: dict = read_json()
     if not data['books']:
@@ -51,15 +52,22 @@ def search() -> main:
     data = read_json()
     for book in data['books']:
         if field_text[1] in book[key_for_search]:
-
             for key, value in book.items():
+                if key == 'status':
+                    value = lexicon_status[value]
                 print(keyboard.keyboard_print[key], value)
             print('-' * 20)
     return main.main()
 
 
 def show_all():
-    pass
+    data = read_json()
+    for book in data['books']:
+        for key, value in book.items():
+            if key == 'status':
+                value = lexicon_status[value]
+            print(keyboard.keyboard_print[key], value)
+        print('-' * 20)
 
 
 def change_status():

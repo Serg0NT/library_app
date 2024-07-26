@@ -1,9 +1,11 @@
-from manipulation import add, delete, search
+from manipulation import add, delete, search, show_all, change_status
 
 keyboard_main: {str: str} = {
     'д': add,
     'у': delete,
     'п': search,
+    'в': show_all,
+    'с': change_status,
 }
 
 keyboard_search: {str: str} = {
