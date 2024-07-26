@@ -1,12 +1,15 @@
 import main
 import keyboard
 from client import (response_title, response_author,
-                    response_year, response_id, response_search, main_response)
-from database import read_json, write_json
-from lexicon import lexicon_status
+                    response_year, response_id, response_search, response_status)
+from database import write_json
+from lexicon import lexicon_status, lexicon_print
 
 
-def add() -> main:
+def add(data: dict) -> None:
+    """
+    Добавляет новую книгу.
+    """
     book: {str: any} = {
         'id': None,
         'title': response_title(),
@@ -14,8 +17,6 @@ def add() -> main:
         'year': response_year(),
         'status': True,
     }
-
-    data: dict = read_json()
     if not data:
         data = {
             'count': 0,
@@ -25,57 +26,104 @@ def add() -> main:
     data['books'].append(book)
     data['count']: int = data.get('count', 0) + 1
     write_json(data)
-    return main.main()
 
 
-def delete() -> str:
+def delete(data: dict) -> None:
+    """
+    Удаляет книгу по введеному id
+    """
+    _check_empty_data(data)
+
     del_id: int = response_id()
-    data: dict = read_json()
-    if not data['books']:
-        print('Файл БД отсутствует или пуст.\n')
-        return main.main()
-    for book in data['books']:
-        if book['id'] == del_id:
-            data['books'].remove(book)
-            data['count'] = data.get('count', 0) - 1
-            break
-        else:
-            print('Книга с данным ID отсутствует.\n')
-            return delete()
+    del_book = _find_curr_book(del_id, data)
+    if del_book:
+        data['books'].remove(del_book)
+        data['count'] = data.get('count', 0) - 1
+    else:
+        print('Книга с данным ID отсутствует.\n')
+        return delete(data)
     write_json(data)
-    return main.main()
 
 
-def search() -> main:
+def search(data: dict) -> main:
+    """
+    Ищет книгу по введенному параметру
+    (автор, название или год)
+    """
+    _check_empty_data(data)
+
     field_text: tuple = response_search()
     key_for_search = keyboard.keyboard_search[field_text[0]]
-    data = read_json()
     for book in data['books']:
         if field_text[1] in book[key_for_search]:
             for key, value in book.items():
                 if key == 'status':
                     value = lexicon_status[value]
-                print(keyboard.keyboard_print[key], value)
+                print(lexicon_print[key], value)
             print('-' * 20)
-    return main.main()
+    main.main(data)
 
 
-def show_all():
-    data = read_json()
+def show_all(data: dict) -> main:
+    """
+    Выводит список всех книг.
+    """
+    _check_empty_data(data)
+
     for book in data['books']:
         for key, value in book.items():
             if key == 'status':
                 value = lexicon_status[value]
-            print(keyboard.keyboard_print[key], value)
+            print(lexicon_print[key], value)
         print('-' * 20)
 
-
-def change_status():
-    pass
+    main.main(data)
 
 
-def _auto_id(data) -> int:
+def change_status(data: dict):
+    """
+    Меняет статус книги
+    """
+    _check_empty_data(data)
+    curr_id = response_id()
+    curr_book = _find_curr_book(curr_id, data)
+    if not curr_book:
+        print('Книга с данным ID отсутствует.\n')
+        return change_status(data)
+    ind = data['books'].index(curr_book)
+    status = response_status()
+    if status not in ['в наличии', 'выдана']:
+        print('Такой статус не существует')
+        return change_status(data)
+    if status == 'в наличии':
+        curr_book['status'] = True
+    else:
+        curr_book['status'] = False
+
+    data['books'][ind] = curr_book
+    write_json(data)
+
+
+def _auto_id(data: dict) -> int:
+    """
+    Генерирует автоматическое значение id
+    """
     if data['books']:
         max_id: int = data['books'][-1]['id']
         return max_id + 1
     return 1
+
+
+def _find_curr_book(curr_id: int, data: dict) -> dict | None:
+    """
+    Ищет книгу в БД по введенному id
+    """
+    for book in data['books']:
+        if book['id'] == curr_id:
+            return book
+
+
+def _check_empty_data(data: dict):
+    if not data or not data['books']:
+        print('Файл БД отсутствует или пуст.\n')
+        return main.main(data)

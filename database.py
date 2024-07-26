@@ -1,5 +1,7 @@
 import json
 
+import main
+
 
 def read_json() -> dict | None:
     try:
@@ -13,7 +15,12 @@ def read_json() -> dict | None:
 def write_json(data) -> None:
     try:
         with open('data.json', 'w') as file:
-            json.dump(data, file, indent=2, ensure_ascii=True)
+            json.dump(data, file, indent=2)
+        print('Данные записаны успешно\n')
+
     except Exception as err:
         print(f'Неожиданная ошибка {err}.\n'
               f'Обратитесь в техподдержку')
+    finally:
+        main.main(data)
+

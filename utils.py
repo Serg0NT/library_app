@@ -1,2 +1,0 @@
-def autoincrement():
-    return

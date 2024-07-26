@@ -1,5 +1,6 @@
 from manipulation import add, delete, search, show_all, change_status
 
+# словарь нужен для ассоциации введеных символов с запускаемыми фукциями
 keyboard_main: {str: str} = {
     'д': add,
     'у': delete,
@@ -8,16 +9,11 @@ keyboard_main: {str: str} = {
     'с': change_status,
 }
 
+# словарь нужен для ассоциации введеных символов с полями для поиска книги
 keyboard_search: {str: str} = {
     'н': 'title',
     'а': 'author',
     'г': 'year',
 }
 
-keyboard_print: {str: any} = {
-    'id': 'ID - ',
-    'title': 'Название - ',
-    'author': 'Автор - ',
-    'year': 'Год издания - ',
-    'status': 'Статус - ',
-}
+

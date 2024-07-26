@@ -1,11 +1,11 @@
 from lexicon import lexicon
 
 
-def main_response() -> str:
+def main_menu() -> str:
     answer = input(lexicon['req_1']).lower()
     if len(answer) != 1:
         print(lexicon['not_none'])
-        return main_response()
+        return main_menu()
     return answer
 
 
@@ -59,3 +59,11 @@ def response_search() -> tuple:
         print(lexicon['not_none'])
         return response_search()
     return field, text
+
+
+def response_status() -> str:
+    status: str = input(lexicon['req_status']).lower()
+    if len(status) < 1:
+        print(lexicon['not_none'])
+        return response_status()
+    return status
