@@ -16,5 +16,3 @@ def main(data: dict) -> None:
 if __name__ == '__main__':
     data: dict = read_json()
     main(data)
-    # res = main()
-    # keyboard[res]()
